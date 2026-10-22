@@ -53,6 +53,14 @@ app.use(morgan(env.NODE_ENV === 'development' ? 'dev' : 'combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Support Vercel Serverless Function rewrites (preserves original requested path)
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  if (req.originalUrl && req.url !== req.originalUrl && req.originalUrl !== '/') {
+    req.url = req.originalUrl;
+  }
+  next();
+});
+
 // Liveness & Database Health Check
 app.get('/health', async (_req: Request, res: Response) => {
   const dbStatus = await db.checkConnection();

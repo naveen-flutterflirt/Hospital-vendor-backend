@@ -4,6 +4,9 @@
   "description": "Hospital Inventory & Vendor Management CRM Backend API",
   "type": "module",
   "main": "dist/server.js",
+  "allowScripts": {
+    "esbuild": true
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "clean-port": "kill -9 $(lsof -ti :5001) 2>/dev/null || true",
