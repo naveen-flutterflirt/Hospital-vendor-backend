@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import rateLimit from 'express-rate-limit';
+import { rateLimit } from 'express-rate-limit';
 import { AuthController } from '../controllers/auth.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 
 const router = Router();
 
 // Enterprise Rate Limiter: Max 10 login requests per 15 minutes per IP
-const loginRateLimiter = rateLimit({
+const loginRateLimiter = (rateLimit as any)({
   windowMs: 15 * 60 * 1000,
   max: 10,
   standardHeaders: true,

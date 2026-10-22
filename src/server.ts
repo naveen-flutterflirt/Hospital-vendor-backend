@@ -30,8 +30,8 @@ app.set('trust proxy', 1);
 
 // Security and utility middleware
 app.use((helmet as any)());
-app.use(cors({
-  origin: (origin, callback) => {
+app.use((cors as any)({
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     // Allow server-to-server or curl requests with no origin
     if (!origin) return callback(null, true);
 
@@ -49,7 +49,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
 }));
-app.use(morgan(env.NODE_ENV === 'development' ? 'dev' : 'combined'));
+app.use((morgan as any)(env.NODE_ENV === 'development' ? 'dev' : 'combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
