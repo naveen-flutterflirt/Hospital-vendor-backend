@@ -29,7 +29,7 @@ app.disable('x-powered-by');
 app.set('trust proxy', 1);
 
 // Security and utility middleware
-app.use(helmet());
+app.use((helmet as any)());
 app.use(cors({
   origin: (origin, callback) => {
     // Allow server-to-server or curl requests with no origin
