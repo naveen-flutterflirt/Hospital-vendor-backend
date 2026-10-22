@@ -88,27 +88,29 @@ app.use('*', (req, _res, next) => {
 });
 // Centralized error handler
 app.use(errorHandler);
-// Start server
-const server = app.listen(env.PORT, '0.0.0.0', () => {
-    console.log(`🚀 [Hospital CRM Backend] Server running on port ${env.PORT} in ${env.NODE_ENV} mode`);
-    console.log(`🔗 API Base URL: http://localhost:${env.PORT}${env.API_PREFIX}`);
-    console.log(`🩺 Health check: http://localhost:${env.PORT}/health`);
-});
-// Graceful shutdown
-const shutdown = async (signal) => {
-    console.log(`\n🛑 Received ${signal}. Gracefully shutting down...`);
-    server.close(async () => {
-        try {
-            await db.close();
-            console.log('✅ PostgreSQL connection pool closed.');
-            process.exit(0);
-        }
-        catch (err) {
-            console.error('❌ Error during database pool shutdown:', err);
-            process.exit(1);
-        }
+// Start server only when running as a standalone process (not on Vercel serverless)
+if (!process.env.VERCEL) {
+    const server = app.listen(env.PORT, '0.0.0.0', () => {
+        console.log(`🚀 [Hospital CRM Backend] Server running on port ${env.PORT} in ${env.NODE_ENV} mode`);
+        console.log(`🔗 API Base URL: http://localhost:${env.PORT}${env.API_PREFIX}`);
+        console.log(`🩺 Health check: http://localhost:${env.PORT}/health`);
     });
-};
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT', () => shutdown('SIGINT'));
+    // Graceful shutdown
+    const shutdown = async (signal) => {
+        console.log(`\n🛑 Received ${signal}. Gracefully shutting down...`);
+        server.close(async () => {
+            try {
+                await db.close();
+                console.log('✅ PostgreSQL connection pool closed.');
+                process.exit(0);
+            }
+            catch (err) {
+                console.error('❌ Error during database pool shutdown:', err);
+                process.exit(1);
+            }
+        });
+    };
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    process.on('SIGINT', () => shutdown('SIGINT'));
+}
 export default app;
